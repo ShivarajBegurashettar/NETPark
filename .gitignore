@@ -1,0 +1,29 @@
+# Root gitignore for NETPark
+
+# Node
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*
+
+# Build outputs
+dist/
+frontend/dist/
+
+# Trained data and large binaries
+eng.traineddata
+*.traineddata
+
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+logs
+*.log
+
+# Misc
+uploads/
