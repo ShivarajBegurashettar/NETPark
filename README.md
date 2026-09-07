@@ -8,7 +8,7 @@
 
 > An AI-powered, full-stack parking management system built with the **MERN stack** — featuring real-time slot booking, wallet payments, license plate recognition (ALPR), dynamic pricing, and automated email notifications.
 
-🌐 **Live Demo**: [net-park.vercel.app](https://net-park.vercel.app)
+🌐 **Live Demo**: [net-park.vercel.app](https://net-park-seven.vercel.app/)
 
 ---
 
