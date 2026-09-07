@@ -231,8 +231,14 @@ The app will be available at `http://localhost:5173`
 
 ## 👥 Team
 
-- **Karthik Karer** — Lead Developer
-- **Contributors** — See [Contributors](https://github.com/Karthikkarer/NETPark/graphs/contributors)
+**Shivaraj Basavaraj Begurashettar**  
+Full Stack Developer
+
+**Karthik Karer**  
+Lead Developer
+
+**Darshan**  
+Developer
 
 ---
 
