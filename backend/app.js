@@ -40,13 +40,13 @@ app.use('/ai', aiRoutes);
 app.use('/api/alpr', alprRoutes);
 app.use('/alpr', alprRoutes);
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/netpark';
+const ATLAS_URI = 'mongodb+srv://karerkarthik:fkI9pjAwQ36FOSzi@netpark.8ofslak.mongodb.net/?appName=NETPark';
 
 export const connectDB = async () => {
   try {
     if (mongoose.connection.readyState >= 1) return;
-    if (!MONGO_URI) return;
-    await mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 5000 });
+    const uri = process.env.MONGO_URI || ATLAS_URI;
+    await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
     console.log('Connected to MongoDB');
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
