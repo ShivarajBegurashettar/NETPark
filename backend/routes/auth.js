@@ -188,8 +188,8 @@ router.post('/login', async (req, res) => {
             } 
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Login Endpoint Error:', err);
+        res.status(500).json({ error: 'Server error: ' + (err.message || 'Unknown error') });
     }
 });
 
