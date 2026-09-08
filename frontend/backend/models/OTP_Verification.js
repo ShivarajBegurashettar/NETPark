@@ -6,4 +6,4 @@ const otpSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now, expires: 300 } // OTP expires in 5 minutes
 });
 
-export const OTPVerification = mongoose.model('OTPVerification', otpSchema);
+export const OTPVerification = mongoose.models.OTPVerification || mongoose.model('OTPVerification', otpSchema);

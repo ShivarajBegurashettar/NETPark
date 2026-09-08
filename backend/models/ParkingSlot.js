@@ -15,4 +15,4 @@ const slotSchema = new mongoose.Schema({
     }
 });
 
-export const ParkingSlot = mongoose.model('ParkingSlot', slotSchema);
+export const ParkingSlot = mongoose.models.ParkingSlot || mongoose.model('ParkingSlot', slotSchema);
