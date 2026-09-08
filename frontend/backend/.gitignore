@@ -1,0 +1,26 @@
+# Node dependencies
+node_modules/
+
+# Environment files (keep secrets out of git)
+.env
+.env.local
+.env.*
+
+# Build / output
+dist/
+
+# Trained data and large binaries
+eng.traineddata
+*.traineddata
+
+# Uploaded files
+uploads/
+
+# Editor directories and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+logs
+*.log
