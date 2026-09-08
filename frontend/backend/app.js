@@ -13,6 +13,8 @@ import { ParkingSlot } from './models/ParkingSlot.js';
 
 try { dns.setDefaultResultOrder('ipv4first'); } catch (e) {}
 
+mongoose.set('bufferCommands', false);
+
 dotenv.config();
 const app = express();
 app.use(cors());
