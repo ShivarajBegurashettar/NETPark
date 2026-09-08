@@ -292,14 +292,18 @@ router.post('/send-otp', async (req, res) => {
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         
-        await OTPVerification.deleteMany({ email });
-        const newOTP = new OTPVerification({ email, otp });
-        await newOTP.save();
+        try {
+            await OTPVerification.deleteMany({ email });
+            const newOTP = new OTPVerification({ email, otp });
+            await newOTP.save();
+        } catch (dbErr) {
+            console.error('Database OTP save notice:', dbErr.message);
+        }
 
         if (process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD && process.env.SMTP_EMAIL !== 'your-email@gmail.com') {
             try {
                 await transporter.sendMail({
-                    from: `"NETPark Authentic Gateway" <${process.env.SMTP_EMAIL}>`, // Sends exactly as 'NETPark' name
+                    from: `"NETPark Authentic Gateway" <${process.env.SMTP_EMAIL}>`,
                     to: email,
                     subject: 'NETPark - Your Secure Authentication Code',
                     html: `
@@ -321,18 +325,18 @@ router.post('/send-otp', async (req, res) => {
                         </div>
                     `
                 });
-                console.log(`[SMTP SUCCESS] Premium HTML Email OTP officially dispatched to ${email}`);
+                console.log(`[SMTP SUCCESS] Email OTP dispatched to ${email}`);
             } catch (smtpErr) {
-                console.error(`[SMTP OFFLINE]: Google Credentials Failed! Did not send email. Raw local OTP: ${otp}`);
+                console.error(`[SMTP OFFLINE]: ${smtpErr.message}. Fallback test OTP: ${otp}`);
             }
         } else {
-            console.warn(`[SMTP OFFLINE]: No valid .env SMTP_EMAIL found! Did not send email. Raw local OTP: ${otp}`);
+            console.warn(`[SMTP OFFLINE]: No valid SMTP_EMAIL found in env! Fallback test OTP: ${otp}`);
         }
 
         res.json({ message: 'OTP sent successfully to ' + email });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Server error sending OTP' });
+        res.status(500).json({ error: 'Server error sending OTP: ' + (err.message || 'Unknown error') });
     }
 });
 
