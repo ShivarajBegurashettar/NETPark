@@ -8,15 +8,17 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Persistent OCR Worker for blazing-fast recognition
 let worker = null;
-const initWorker = async () => {
-    worker = await Tesseract.createWorker('eng');
-    await worker.setParameters({
-        tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-        tessedit_pageseg_mode: '7',
-    });
-    console.log('--- AI OCR Worker Initialized & Warmed Up ---');
+const getWorker = async () => {
+    if (!worker) {
+        worker = await Tesseract.createWorker('eng');
+        await worker.setParameters({
+            tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            tessedit_pageseg_mode: '7',
+        });
+        console.log('--- AI OCR Worker Initialized & Warmed Up ---');
+    }
+    return worker;
 };
-initWorker();
 
 // Helper to clean and normalize plate text for robust comparison
 const normalizePlate = (text) => {
@@ -74,12 +76,10 @@ router.post('/scan', upload.single('image'), async (req, res) => {
             return res.status(400).json({ error: 'No image uploaded' });
         }
 
-        if (!worker) {
-            await initWorker();
-        }
+        const w = await getWorker();
 
         // Use the pre-warmed persistent worker for high-speed analysis
-        const { data: { text, confidence } } = await worker.recognize(req.file.buffer);
+        const { data: { text, confidence } } = await w.recognize(req.file.buffer);
 
         let rawText = text.trim();
         // Clean text: Keep only Alphanumeric
