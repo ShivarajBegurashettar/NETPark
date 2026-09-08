@@ -17,6 +17,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Ensure DB is connected before processing any API request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (e) {
+    console.error('DB Middleware Connection Error:', e.message);
+  }
+  next();
+});
+
 app.get(['/', '/api'], (req, res) => {
   res.status(200).json({ message: 'NETPark API Server is Live & Running!' });
 });
