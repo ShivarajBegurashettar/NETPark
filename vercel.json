@@ -1,21 +1,26 @@
 {
-  "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
-  "installCommand": "npm install",
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/[...path]"
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
     },
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+    "backend": {
+      "root": ".",
+      "framework": "express",
+      "buildCommand": "npm install",
+      "functions": {
+        "api/*.js": {
+          "runtime": "nodejs20.x"
+        }
+      },
+      "rewrites": [
+        { "source": "/api/(.*)", "destination": "/api/[...path]" }
+      ]
     }
-  ]
+  }
 }
