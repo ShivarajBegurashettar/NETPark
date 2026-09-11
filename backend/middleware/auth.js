@@ -4,8 +4,9 @@ export const protect = (req, res, next) => {
     let token = req.headers.authorization;
     if (token && token.startsWith('Bearer')) {
         try {
-            token = token.split(' ')[1];
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret123');
+            const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev_insecure_jwt_secret' : null);
+            if (!secret) throw new Error('JWT_SECRET configuration missing');
+            const decoded = jwt.verify(token, secret);
             req.user = decoded;
             next();
         } catch (error) {

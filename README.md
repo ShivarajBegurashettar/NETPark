@@ -109,7 +109,7 @@ NETPark/
 ### 1. Clone the Repository
 
 ```bash
-git clone git@github.com:Karthikkarer/NETPark.git
+git clone https://github.com/ShivarajBegurashettar/NETPark.git
 cd NETPark
 ```
 

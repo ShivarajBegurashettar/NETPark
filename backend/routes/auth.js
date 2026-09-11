@@ -27,17 +27,17 @@ const transporter = nodemailer.createTransport({
 // AUTO-SEED MASTER ADMIN ON STARTUP
 export const seedMasterAdmin = async () => {
     try {
-        const masterEmail = "begurshatershivaraj@gmail.com";
-        const masterPass = "Shivaraj#12345";
+        const masterEmail = (process.env.MASTER_ADMIN_EMAIL || "admin@netpark.local").toLowerCase().trim();
+        const masterPass = process.env.MASTER_ADMIN_PASSWORD || "Admin@12345#NetPark";
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(masterPass, salt);
 
         const existing = await User.findOne({ email: masterEmail });
         if (!existing) {
             const master = new User({
-                name: "Shivaraj Master Admin",
+                name: "NETPark Master Admin",
                 email: masterEmail,
-                phone: "9999999999",
+                phone: "0000000000",
                 password: hashedPassword,
                 role: 'admin',
                 adminStatus: 'Approved',
@@ -46,14 +46,6 @@ export const seedMasterAdmin = async () => {
             });
             await master.save();
             console.log('--- MASTER ADMIN SYSTEM SEEDED ---');
-        } else {
-            // Force Sync: Update master admin password if it's mismatched or for reliability
-            existing.password = hashedPassword;
-            existing.role = 'admin';
-            existing.isMasterAdmin = true;
-            existing.adminStatus = 'Approved';
-            await existing.save();
-            console.log('--- MASTER ADMIN SECURITY RE-SYNCED ---');
         }
     } catch (e) {
         console.error("Master Seeding Failed", e);
@@ -114,8 +106,8 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const normalizedEmail = email.toLowerCase().trim();
-        const masterEmail = "begurshatershivaraj@gmail.com";
-        const masterPass = "Shivaraj#12345";
+        const masterEmail = (process.env.MASTER_ADMIN_EMAIL || "admin@netpark.local").toLowerCase().trim();
+        const masterPass = process.env.MASTER_ADMIN_PASSWORD || "Admin@12345#NetPark";
 
         console.log(`[LOGIN ATTEMPT]: ${normalizedEmail}`);
 
@@ -130,9 +122,9 @@ router.post('/login', async (req, res) => {
 
                 if (!user) {
                     user = new User({
-                        name: "Shivaraj Master Admin",
+                        name: "NETPark Master Admin",
                         email: masterEmail,
-                        phone: "9999999999",
+                        phone: "0000000000",
                         password: hashedPassword,
                         role: 'admin',
                         adminStatus: 'Approved',
@@ -144,9 +136,9 @@ router.post('/login', async (req, res) => {
                 console.warn("DB notice during Master login:", dbErr.message);
                 user = {
                     _id: "master-admin-id",
-                    name: "Shivaraj Master Admin",
+                    name: "NETPark Master Admin",
                     email: masterEmail,
-                    phone: "9999999999",
+                    phone: "0000000000",
                     role: 'admin',
                     adminStatus: 'Approved',
                     isMasterAdmin: true,
@@ -154,7 +146,7 @@ router.post('/login', async (req, res) => {
                 };
             }
 
-            const token = jwt.sign({ id: user._id, role: user.role, isMaster: true }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
+            const token = jwt.sign({ id: user._id, role: user.role, isMaster: true }, process.env.JWT_SECRET || 'dev_secret_fallback', { expiresIn: '1d' });
             return res.json({ 
                 message: 'Master Login successful', 
                 token, 
@@ -184,7 +176,7 @@ router.post('/login', async (req, res) => {
                 return res.status(401).json({ error: 'Your request is pending. It will be accepted in 24 hours.' });
             }
             if (user.adminStatus === 'Rejected') {
-                return res.status(401).json({ error: 'You are not eligible. If any query contact begurshatershivaraj@gmail.com' });
+                return res.status(401).json({ error: 'You are not eligible. If any query contact administrator.' });
             }
         }
 
@@ -395,8 +387,8 @@ router.post('/verify-otp-login', async (req, res) => {
             }
         }
 
-        // 3. Universal test fallback
-        if (!validOtp && (trimmedOtp === '123456' || trimmedOtp === '000000' || trimmedOtp === '275540')) {
+        // 3. Test fallback in non-production environments
+        if (!validOtp && process.env.NODE_ENV !== 'production' && (trimmedOtp === '123456' || trimmedOtp === '000000')) {
             validOtp = true;
         }
 

@@ -53,8 +53,6 @@ app.use('/ai', aiRoutes);
 app.use('/api/alpr', alprRoutes);
 app.use('/alpr', alprRoutes);
 
-const ATLAS_URI = 'mongodb+srv://karerkarthik:fkI9pjAwQ36FOSzi@netpark.8ofslak.mongodb.net/?appName=NETPark';
-
 const seedDefaultSlots = async () => {
     try {
         const initialHubliBranches = [
@@ -77,11 +75,15 @@ const seedDefaultSlots = async () => {
 export const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) return;
 
-  const uri = process.env.MONGO_URI || ATLAS_URI;
+  const uri = process.env.MONGO_URI;
 
   try {
-    await mongoose.connect(uri, { serverSelectionTimeoutMS: 3000 });
-    console.log('Connected to Primary MongoDB');
+    if (uri) {
+      await mongoose.connect(uri, { serverSelectionTimeoutMS: 3000 });
+      console.log('Connected to Primary MongoDB');
+    } else {
+      throw new Error('No MONGO_URI provided in environment');
+    }
   } catch (error) {
     console.warn('Primary MongoDB connection failed:', error.message, '- Falling back to Memory DB');
     try {
